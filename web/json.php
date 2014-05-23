@@ -6,6 +6,50 @@ error_reporting( E_ALL );
 include("pierc_db.php");
 include("config.php");
 
+function cidr_match($ip, $cidr)
+{
+    list($subnet, $mask) = explode('/', $cidr);
+
+    if ((ip2long($ip) & ~((1 << (32 - $mask)) - 1) ) == ip2long($subnet))
+    { 
+        return true;
+    }
+
+    return false;
+}
+
+function test_cidr_access($channel)
+{
+	$ip = $_SERVER['REMOTE_ADDR'];
+	if ( in_array($channel, config::$cidr_protected_channels ) ) {	
+		$trusted = false;
+		foreach( config::$cidr_trusted_subnets as $subnet ) {
+			if ( cidr_match($ip, $subnet ) ) {
+				$trusted = true;
+				break;
+			}
+		}
+
+		if ( ! $trusted ) {
+			echo json_encode(
+				array(
+					array (
+						'id' => '1',
+						'channel' => $channel,
+						'name' => 'restricted',
+						'time' => date("Y-m-d h:i:s"),
+						'message' => 'Access to this log is restricted.',
+						'type' => 'pubmsg',
+						'hidden' => 'F'
+
+					)
+				)
+			);
+			exit;
+		}
+	}
+}
+
 $pdb = config::get_db();
 
 if( !isset( $_GET['type'] ) )
@@ -38,6 +82,8 @@ else
 {
 	$channel =  config::$default_channel;
 }
+
+test_cidr_access($channel);
 
 # SEARCH 
 if ( isset( $_GET['search'] ) )

@@ -13,7 +13,19 @@ class config
 	static $default_channel =	"logbot_test";
 	static $default_number_of_lines = 50;
 
-	static $timezone = 		"America/Vancouver";
+	static $timezone = 		"UTC";
+
+	static $cidr_protected_channels = array(
+		'private'
+	);
+
+	static $cidr_trusted_subnets = array(
+		'192.168.5.0/24',
+		'192.168.1.0/24',
+		'192.168.4.0/24',
+		'192.168.40.0/24', 
+		'192.168.200.11/32' 
+	);
 
 	static function get_db()
 	{
