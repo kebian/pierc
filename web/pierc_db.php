@@ -130,7 +130,7 @@ class pierc_db extends db_class
 		return $count;
 	}
 	
-	public function get_context( $id, $n)
+	public function get_context($id, $n)
 	{
 		// Let's imagine that we have 800,000 records, divided
 		// between two different channels, #hurf and #durf. 
@@ -192,13 +192,13 @@ class pierc_db extends db_class
 		return array_reverse($this->hashinate($results));
 	}
 	
-	public function get_search_results( $search, $n, $offset=0 )
+	public function get_search_results( $search, $channel, $n, $offset=0 )
 	{
 		$search = urldecode($search);
 		$n = (int) $n;
 		$offset = (int) $offset;
 		
-		$searchquery = " WHERE ";
+		$searchquery = " WHERE channel = '$channel' AND ";
 		$searcharray = preg_split("/[ |]/", $search);
 		foreach($searcharray as $searchterm )
 		{

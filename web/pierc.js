@@ -232,14 +232,16 @@ function refresh()
 // Perform a search for the given search value. Populate the page with the results.
 function search_for( searchvalue )
 {
+	var channelselect = $('#channellist').val();
 	// If the previous search was for the same term, don't search again
-	if(searchvalue == most_recent_search)
+	if ( (searchvalue == most_recent_search ) && ( channelselect == most_recent_search_channel ) )
 	{
 		return;
 	}
 
 	current_offset = 50;
-	most_recent_search = searchvalue;	
+	most_recent_search = searchvalue;
+	most_recent_search_channel = channelselect;
 	window.location.hash = "search-"+searchvalue;
 	hash = window.location.hash;
     	
@@ -252,7 +254,10 @@ function search_for( searchvalue )
 	loading();
 	
 	// Ajax call to get search results
-	$.getJSON("json.php", {'search':searchvalue}, 
+	$.getJSON("json.php", {
+			'search': searchvalue,
+			'channel': channelselect
+		}, 
         function(data){
 		if( data.length < 50 ) { $("#searchoptions").hide(); }	
         	$(data).each( function(i, item) { 

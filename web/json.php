@@ -97,7 +97,7 @@ if ( isset( $_GET['search'] ) )
 	}
 	
 	// Search channel for $search
-	$lines = $pdb->get_search_results( $search, $n, $offset );
+	$lines = $pdb->get_search_results( $search, $channel, $n, $offset );
 	print json_encode( $lines );
 	return;
 }	
@@ -140,6 +140,10 @@ if( $_GET['type'] == 'context' )
 	if( $context == "middle" )
 	{
 		$lines = $pdb->get_context( $id,  $n );
+		if (count ($lines) ) {
+			// test to see if the first is on a restricted channel.
+			test_cidr_access($lines[0]['channel']);
+		}
 	}
 	// Used to retrieve a page after the existing page
 	if( $context == "after" )
